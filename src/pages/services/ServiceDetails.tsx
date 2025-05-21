@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,6 +11,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import WorkerCard from "@/components/WorkerCard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Filter, Star, Search } from "lucide-react";
+import { format } from "date-fns";
 
 // Sample services data
 const services = [
@@ -100,6 +100,7 @@ const ServiceDetails = () => {
   const [formData, setFormData] = useState({
     date: "",
     time: "",
+    duration: "hourly", // New field for duration
     numberOfWorkers: 1,
     address: "",
     location: { lat: 28.6139, lng: 77.2090 }, // Default to Delhi
@@ -107,6 +108,24 @@ const ServiceDetails = () => {
     termsAccepted: false
   });
   const [showTermsDialog, setShowTermsDialog] = useState(false);
+  
+  // Generate time slots in 30-minute intervals in 12-hour format
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 7; hour <= 20; hour++) {
+      const hourFormatted = hour > 12 ? hour - 12 : hour;
+      const ampm = hour >= 12 ? "pm" : "am";
+      
+      // Add hour slot (e.g., 1:00 pm)
+      slots.push(`${hourFormatted}:00 ${ampm}`);
+      
+      // Add half-hour slot (e.g., 1:30 pm)
+      slots.push(`${hourFormatted}:30 ${ampm}`);
+    }
+    return slots;
+  };
+
+  const timeSlots = generateTimeSlots();
   
   // New state for worker selection
   const [availableWorkers, setAvailableWorkers] = useState<Worker[]>([]);
@@ -172,6 +191,13 @@ const ServiceDetails = () => {
     }));
   };
   
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
   const handleWorkerCountChange = (change: number) => {
     setFormData(prev => ({
       ...prev,
@@ -203,10 +229,10 @@ const ServiceDetails = () => {
   
   const nextStep = () => {
     if (step === 1) {
-      if (!formData.date || !formData.time) {
+      if (!formData.date || !formData.time || !formData.duration) {
         toast({
           title: "Missing information",
-          description: "Please select date and time",
+          description: "Please select date, time and duration",
           variant: "destructive",
         });
         return;
@@ -304,7 +330,7 @@ const ServiceDetails = () => {
             <h2 className="text-lg font-medium">When do you need {service.name}?</h2>
             
             <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
+              <Label htmlFor="date">Date/दिनांक</Label>
               <Input
                 id="date"
                 name="date"
@@ -317,15 +343,39 @@ const ServiceDetails = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="time">Time</Label>
-              <Input
-                id="time"
-                name="time"
-                type="time"
+              <Label htmlFor="duration">Duration/अवधि</Label>
+              <Select
+                value={formData.duration}
+                onValueChange={(value) => handleSelectChange("duration", value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select duration" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hourly">Hourly/घंटे के हिसाब से</SelectItem>
+                  <SelectItem value="half-day">Half Day/आधा दिन</SelectItem>
+                  <SelectItem value="full-day">Full Day/पूरा दिन</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="time">Time/समय</Label>
+              <Select
                 value={formData.time}
-                onChange={handleInputChange}
-                required
-              />
+                onValueChange={(value) => handleSelectChange("time", value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select time" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  {timeSlots.map((slot) => (
+                    <SelectItem key={slot} value={slot}>
+                      {slot}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <Button className="w-full" onClick={nextStep}>Continue</Button>
