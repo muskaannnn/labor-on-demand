@@ -112,7 +112,7 @@ const Home = () => {
   return (
     <div className="container max-w-md mx-auto px-4 pb-20 pt-4">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">LabourLink</h1>
+        <h1 className="text-2xl font-bold">Labour-on-Demand</h1>
         {user && <UserRoleToggle />}
       </div>
       
