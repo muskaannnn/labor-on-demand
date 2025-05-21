@@ -61,6 +61,9 @@ const CreateProfile = () => {
     }, 1000);
   };
 
+  // Determine if we should show Hindi labels based on role
+  const showBilingual = formData.role === "worker";
+
   return (
     <AuthLayout 
       title="Create your profile"
@@ -69,47 +72,55 @@ const CreateProfile = () => {
       <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">
+              {showBilingual ? "Name / नाम" : "Full Name"}
+            </Label>
             <Input
               id="name"
               name="name"
-              placeholder="Enter your full name"
+              placeholder={showBilingual ? "Enter your name / अपना नाम दर्ज करें" : "Enter your full name"}
               value={formData.name}
               onChange={handleChange}
               required
+              className="bg-white border-primary focus:ring-primary focus:border-primary"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <div className="flex items-center border rounded-md overflow-hidden bg-muted">
-              <span className="px-3 py-2 text-muted-foreground border-r">+91</span>
+            <Label htmlFor="phoneNumber">
+              {showBilingual ? "Phone Number / फोन नंबर" : "Phone Number"}
+            </Label>
+            <div className="flex items-center border rounded-md overflow-hidden border-primary bg-white">
+              <span className="px-3 py-2 text-muted-foreground border-r bg-muted">+91</span>
               <Input
                 id="phoneNumber"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 disabled
-                className="border-none bg-muted focus-visible:ring-0"
+                className="border-none focus-visible:ring-0 bg-muted"
               />
             </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
+            <Label htmlFor="city">
+              {showBilingual ? "City / शहर" : "City"}
+            </Label>
             <Input
               id="city"
               name="city"
-              placeholder="Enter your city"
+              placeholder={showBilingual ? "Enter your city / अपना शहर दर्ज करें" : "Enter your city"}
               value={formData.city}
               onChange={handleChange}
               required
+              className="bg-white border-primary focus:ring-primary focus:border-primary"
             />
           </div>
           
           {formData.role === "worker" && (
             <div className="pt-2 border-t">
               <p className="text-sm text-muted-foreground mb-2">
-                A team member will contact you to complete your worker profile with additional information
+                A team member will contact you to complete your worker profile with additional information / टीम का सदस्य आपसे संपर्क करके आपकी प्रोफाइल को पूरा करने में मदद करेगा
               </p>
             </div>
           )}
@@ -117,10 +128,10 @@ const CreateProfile = () => {
         
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full bg-primary hover:bg-primary/90 text-white" 
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Creating profile..." : "Complete Profile"}
+          {isSubmitting ? "Creating profile..." : showBilingual ? "Complete Profile / प्रोफाइल पूरा करें" : "Complete Profile"}
         </Button>
       </form>
     </AuthLayout>
