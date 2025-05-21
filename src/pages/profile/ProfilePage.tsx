@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -91,7 +90,7 @@ const ProfilePage = () => {
         </div>
       </div>
       
-      <BottomNavigation />
+      {user && <BottomNavigation />}
     </div>
   );
 };

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import ServiceCard from "@/components/ServiceCard";
 import UserRoleToggle from "@/components/UserRoleToggle";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -117,7 +118,8 @@ const Home = () => {
       
       {renderContent()}
       
-      <BottomNavigation />
+      {/* Only show bottom navigation when user is logged in */}
+      {user && <BottomNavigation />}
     </div>
   );
 };

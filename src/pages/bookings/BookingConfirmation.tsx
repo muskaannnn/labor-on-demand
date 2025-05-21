@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Booking } from "@/types";
+import { Booking, User } from "@/types";
 import BookingStatusBadge from "@/components/BookingStatusBadge";
 import BottomNavigation from "@/components/BottomNavigation";
 
@@ -11,8 +10,17 @@ const BookingConfirmation = () => {
   const { bookingId } = useParams();
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   
   useEffect(() => {
+    // Get user from local storage
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      navigate("/auth/phone");
+    }
+    
     // Get booking from local storage
     const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
     const foundBooking = bookings.find((b: Booking) => b.id === bookingId);
@@ -103,7 +111,7 @@ const BookingConfirmation = () => {
         </div>
       </div>
       
-      <BottomNavigation />
+      {user && <BottomNavigation />}
     </div>
   );
 };

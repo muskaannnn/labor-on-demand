@@ -19,7 +19,7 @@ const BookingStatusBadge = ({ status }: BookingStatusBadgeProps) => {
       case "inProgress":
         return { label: "In Progress", variant: "default" as const };
       case "completed":
-        return { label: "Completed", variant: "success" as const };
+        return { label: "Completed", variant: "outline" as const, className: "bg-green-500 text-white" };
       default:
         return { label: "Unknown", variant: "outline" as const };
     }
@@ -28,7 +28,7 @@ const BookingStatusBadge = ({ status }: BookingStatusBadgeProps) => {
   const config = getStatusConfig();
 
   return (
-    <Badge variant={config.variant} className={status === "completed" ? "bg-green-500" : ""}>
+    <Badge variant={config.variant} className={status === "completed" ? "bg-green-500 text-white" : ""}>
       {config.label}
     </Badge>
   );
